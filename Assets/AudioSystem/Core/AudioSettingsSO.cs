@@ -14,22 +14,22 @@ namespace AudioSystem
 
         [Header("Code-Driven 音量（无 AudioMixer 时使用）")]
         [SerializeField, Range(0f, 1f)]
-        private float                           master_volume_ = 1f;
-
-        [SerializeField, Range(0f, 1f)]
-        private float                           bgm_volume_ = 1f;
-
-        [SerializeField, Range(0f, 1f)]
-        private float                           battle_volume_ = 1f;
-
-        [SerializeField, Range(0f, 1f)]
-        private float                           ui_volume_ = 1f;
-
-        [SerializeField, Range(0f, 1f)]
-        private float                           environment_volume_ = 1f;
-
-        [SerializeField, Range(0f, 1f)]
-        private float                           dialogue_volume_ = 1f;
+        private float                               master_volume_ = 1f;
+    
+        [SerializeField, Range(0f, 1f)] 
+        private float                               bgm_volume_ = 1f;
+    
+        [SerializeField, Range(0f, 1f)] 
+        private float                               battle_volume_ = 1f;
+    
+        [SerializeField, Range(0f, 1f)] 
+        private float                               ui_volume_ = 1f;
+    
+        [SerializeField, Range(0f, 1f)] 
+        private float                               environment_volume_ = 1f;
+    
+        [SerializeField, Range(0f, 1f)] 
+        private float                               dialogue_volume_ = 1f;
 
         #endregion
 
@@ -37,46 +37,38 @@ namespace AudioSystem
 
         [Header("AudioMixer（推荐）")]
         [SerializeField, Tooltip("AudioMixer 资源引用")]
-        private AudioMixer                       mixer_;
+        private AudioMixer                          mixer_;
 
         [SerializeField, Tooltip("主混音组")]
-        private AudioMixerGroup                  master_group_;
+        private AudioMixerGroup                     master_group_;
 
         [SerializeField, Tooltip("BGM 混音组")]
-        private AudioMixerGroup                  bgm_group_;
+        private AudioMixerGroup                     bgm_group_;
 
         [SerializeField, Tooltip("战斗音效混合组")]
-        private AudioMixerGroup                  battle_group_;
+        private AudioMixerGroup                     battle_group_;
 
         [SerializeField, Tooltip("UI 音效混合组")]
-        private AudioMixerGroup                  ui_group_;
+        private AudioMixerGroup                     ui_group_;
 
         [SerializeField, Tooltip("环境音效混合组")]
-        private AudioMixerGroup                  environment_group_;
+        private AudioMixerGroup                     environment_group_;
 
         [SerializeField, Tooltip("对话音效混合组")]
-        private AudioMixerGroup                  dialogue_group_;
+        private AudioMixerGroup                     dialogue_group_;
 
         /// <summary>
         /// AudioMixer 中 exposed parameter 的统一命名约定
         /// 自动创建时使用这些名称
-        /// </summary>
-        public const string EXPOSED_MASTER       = "MasterVolume";
-        public const string EXPOSED_BGM          = "BgmVolume";
-        public const string EXPOSED_BATTLE       = "BattleVolume";
-        public const string EXPOSED_UI           = "UIVolume";
-        public const string EXPOSED_ENVIRONMENT  = "EnvironmentVolume";
-        public const string EXPOSED_DIALOGUE     = "DialogueVolume";
-        public const string EXPOSED_PITCH        = "Pitch";
+        /// </summary>                      
+        public const string                         EXPOSED_MASTER       = "MasterVolume";
+        public const string                         EXPOSED_BGM          = "BgmVolume";
+        public const string                         EXPOSED_BATTLE       = "BattleVolume";
+        public const string                         EXPOSED_UI           = "UIVolume";
+        public const string                         EXPOSED_ENVIRONMENT  = "EnvironmentVolume";
+        public const string                         EXPOSED_DIALOGUE     = "DialogueVolume";
 
         #endregion
-
-        [Header("音调随机范围")]
-        [SerializeField, Min(0f)]
-        private float                           pitch_min_ = 0.85f;
-
-        [SerializeField, Min(0f)]
-        private float                           pitch_max_ = 1.15f;
 
         #region Public Properties
 
@@ -160,18 +152,6 @@ namespace AudioSystem
             set => dialogue_volume_ = Mathf.Clamp01(value);
         }
 
-        public float PitchMin
-        {
-            get => pitch_min_;
-            set => pitch_min_ = Mathf.Max(0f, value);
-        }
-
-        public float PitchMax
-        {
-            get => pitch_max_;
-            set => pitch_max_ = Mathf.Max(0f, value);
-        }
-
         #endregion
 
         #region Public Methods
@@ -239,14 +219,6 @@ namespace AudioSystem
         }
 
         /// <summary>
-        /// 随机音调
-        /// </summary>
-        public float GetRandomPitch()
-        {
-            return Random.Range(pitch_min_, pitch_max_);
-        }
-
-        /// <summary>
         /// 将线性音量 (0~1) 转换为分贝 (-80~0 dB)
         /// 用于 AudioMixer 的 exposed parameter
         /// </summary>
@@ -270,10 +242,5 @@ namespace AudioSystem
 
         #endregion
 
-        private void OnValidate()
-        {
-            if (pitch_min_ > pitch_max_)
-                pitch_min_ = pitch_max_;
-        }
     }
 }

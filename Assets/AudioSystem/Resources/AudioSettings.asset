@@ -18,5 +18,10 @@ MonoBehaviour:
   ui_volume_: 1
   environment_volume_: 1
   dialogue_volume_: 1
-  pitch_min_: 0.85
-  pitch_max_: 1.15
+  mixer_: {fileID: 0}
+  master_group_: {fileID: 0}
+  bgm_group_: {fileID: 0}
+  battle_group_: {fileID: 0}
+  ui_group_: {fileID: 0}
+  environment_group_: {fileID: 0}
+  dialogue_group_: {fileID: 0}

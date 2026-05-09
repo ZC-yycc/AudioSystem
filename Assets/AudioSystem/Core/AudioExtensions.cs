@@ -8,6 +8,22 @@ namespace AudioSystem
     public static class AudioExtensions
     {
         /// <summary>
+        /// 通过音频 ID 播放（需在 AudioManager 上配置 AudioClipDataSO）
+        /// </summary>
+        public static AudioHandle AudioPlay(this MonoBehaviour self, string audio_id)
+        {
+            return AudioManager.Instance.Play(audio_id);
+        }
+
+        /// <summary>
+        /// 通过音频 ID 在指定位置播放 3D 音效
+        /// </summary>
+        public static AudioHandle AudioPlay(this MonoBehaviour self, string audio_id, Vector3 position)
+        {
+            return AudioManager.Instance.Play(audio_id, position);
+        }
+
+        /// <summary>
         /// 在 AudioManager 上播放音效
         /// </summary>
         public static AudioHandle AudioPlay(this MonoBehaviour self, AudioClip clip, AudioGroup group)

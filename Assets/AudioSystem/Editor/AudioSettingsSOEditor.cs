@@ -10,14 +10,12 @@ namespace AudioSystem.Editor
     [CustomEditor(typeof(AudioSettingsSO))]
     public class AudioSettingsSOEditor : UnityEditor.Editor
     {
-        private SerializedProperty master_volume_prop_;
-        private SerializedProperty bgm_volume_prop_;
-        private SerializedProperty battle_volume_prop_;
-        private SerializedProperty ui_volume_prop_;
-        private SerializedProperty environment_volume_prop_;
-        private SerializedProperty dialogue_volume_prop_;
-        private SerializedProperty pitch_min_prop_;
-        private SerializedProperty pitch_max_prop_;
+        private SerializedProperty                              master_volume_prop_;
+        private SerializedProperty                              bgm_volume_prop_;
+        private SerializedProperty                              battle_volume_prop_;
+        private SerializedProperty                              ui_volume_prop_;
+        private SerializedProperty                              environment_volume_prop_;
+        private SerializedProperty                              dialogue_volume_prop_;
 
         private void OnEnable()
         {
@@ -27,8 +25,6 @@ namespace AudioSystem.Editor
             ui_volume_prop_          = serializedObject.FindProperty("ui_volume_");
             environment_volume_prop_ = serializedObject.FindProperty("environment_volume_");
             dialogue_volume_prop_    = serializedObject.FindProperty("dialogue_volume_");
-            pitch_min_prop_          = serializedObject.FindProperty("pitch_min_");
-            pitch_max_prop_          = serializedObject.FindProperty("pitch_max_");
         }
 
         public override void OnInspectorGUI()
@@ -66,12 +62,6 @@ namespace AudioSystem.Editor
 
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(10);
-
-            // 音调
-            EditorGUILayout.LabelField("音调随机范围 (Pitch)", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(pitch_min_prop_, new GUIContent("Min Pitch"));
-            EditorGUILayout.PropertyField(pitch_max_prop_, new GUIContent("Max Pitch"));
-            EditorGUILayout.Space(5);
 
             // 快速操作
             EditorGUILayout.LabelField("快速操作", EditorStyles.boldLabel);

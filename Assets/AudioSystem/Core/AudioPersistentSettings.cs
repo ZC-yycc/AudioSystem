@@ -8,18 +8,13 @@ namespace AudioSystem
     /// </summary>
     public static class AudioPersistentSettings
     {
-        private const string KEY_MASTER      = "Audio_Master";
-        private const string KEY_BGM         = "Audio_BGM";
-        private const string KEY_BATTLE      = "Audio_Battle";
-        private const string KEY_UI          = "Audio_UI";
-        private const string KEY_ENVIRONMENT = "Audio_Environment";
-        private const string KEY_DIALOGUE    = "Audio_Dialogue";
-        private const string KEY_PITCH_MIN   = "Audio_PitchMin";
-        private const string KEY_PITCH_MAX   = "Audio_PitchMax";
-
-        private const float DEFAULT_VOLUME = 1f;
-        private const float DEFAULT_PITCH_MIN = 0.85f;
-        private const float DEFAULT_PITCH_MAX = 1.15f;
+        private const string                            KEY_MASTER      = "Audio_Master";
+        private const string                            KEY_BGM         = "Audio_BGM";
+        private const string                            KEY_BATTLE      = "Audio_Battle";
+        private const string                            KEY_UI          = "Audio_UI";
+        private const string                            KEY_ENVIRONMENT = "Audio_Environment";
+        private const string                            KEY_DIALOGUE    = "Audio_Dialogue";
+        private const float                             DEFAULT_VOLUME = 1f;
 
         /// <summary>
         /// 将所有音量保存到 PlayerPrefs
@@ -34,8 +29,6 @@ namespace AudioSystem
             PlayerPrefs.SetFloat(KEY_UI,         settings.UIVolume);
             PlayerPrefs.SetFloat(KEY_ENVIRONMENT, settings.EnvironmentVolume);
             PlayerPrefs.SetFloat(KEY_DIALOGUE,   settings.DialogueVolume);
-            PlayerPrefs.SetFloat(KEY_PITCH_MIN,  settings.PitchMin);
-            PlayerPrefs.SetFloat(KEY_PITCH_MAX,  settings.PitchMax);
 
             PlayerPrefs.Save();
         }
@@ -53,8 +46,6 @@ namespace AudioSystem
             settings.UIVolume          = PlayerPrefs.GetFloat(KEY_UI,         settings.UIVolume);
             settings.EnvironmentVolume = PlayerPrefs.GetFloat(KEY_ENVIRONMENT, settings.EnvironmentVolume);
             settings.DialogueVolume    = PlayerPrefs.GetFloat(KEY_DIALOGUE,   settings.DialogueVolume);
-            settings.PitchMin          = PlayerPrefs.GetFloat(KEY_PITCH_MIN,  settings.PitchMin);
-            settings.PitchMax          = PlayerPrefs.GetFloat(KEY_PITCH_MAX,  settings.PitchMax);
         }
 
         /// <summary>
@@ -76,8 +67,6 @@ namespace AudioSystem
             PlayerPrefs.DeleteKey(KEY_UI);
             PlayerPrefs.DeleteKey(KEY_ENVIRONMENT);
             PlayerPrefs.DeleteKey(KEY_DIALOGUE);
-            PlayerPrefs.DeleteKey(KEY_PITCH_MIN);
-            PlayerPrefs.DeleteKey(KEY_PITCH_MAX);
             PlayerPrefs.Save();
         }
     }

@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Reflection;
+using AudioSystem;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -12,10 +13,11 @@ namespace AudioSystem.Editor
     /// </summary>
     public static class AudioManagerSetup
     {
-        private const string MENU_ROOT = "GameObject/AudioSystem/";
-        private const string RESOURCES_PATH = "Assets/AudioSystem/Resources";
-        private const string MIXER_PATH = "Assets/AudioSystem/Resources/AudioMixer.mixer";
-        private const string SETTINGS_PATH = "Assets/AudioSystem/Resources/AudioSettings.asset";
+        private const string                    MENU_ROOT = "GameObject/AudioSystem/";
+        private const string                    RESOURCES_PATH = "Assets/AudioSystem/Resources";
+        private const string                    MIXER_PATH = "Assets/AudioSystem/Resources/AudioMixer.mixer";
+        private const string                    SETTINGS_PATH = "Assets/AudioSystem/Resources/AudioSettings.asset";
+        private const string                    CLIP_DATA_PATH = "Assets/AudioSystem/Resources/AudioClipData.asset";
 
         [MenuItem(MENU_ROOT + "一键创建完整 AudioSystem", false, 0)]
         public static void CreateFullAudioSystem()
@@ -98,6 +100,15 @@ namespace AudioSystem.Editor
 
         private static void CreateAudioManagerInternal(AudioSettingsSO settings)
         {
+            // 预加载或创建 AudioClipDataSO（统一处理，避免变量名冲突）
+            AudioClipDataSO clip_data = AssetDatabase.LoadAssetAtPath<AudioClipDataSO>(CLIP_DATA_PATH);
+            if (clip_data == null)
+            {
+                clip_data = ScriptableObject.CreateInstance<AudioClipDataSO>();
+                AssetDatabase.CreateAsset(clip_data, CLIP_DATA_PATH);
+                AssetDatabase.SaveAssets();
+            }
+
             AudioManager existing = UnityEngine.Object.FindAnyObjectByType<AudioManager>();
             if (existing != null)
             {
@@ -108,10 +119,11 @@ namespace AudioSystem.Editor
                 {
                     so.FindProperty("settings_").objectReferenceValue = settings;
                 }
+                so.FindProperty("clip_data_").objectReferenceValue = clip_data;
                 so.FindProperty("pool_initial_capacity_").intValue = 10;
                 so.FindProperty("pool_max_capacity_").intValue = 30;
                 so.ApplyModifiedProperties();
-                EditorUtility.DisplayDialog("AudioSystem", "场景中已存在 AudioManager，已更新 Settings 引用。", "确定");
+                EditorUtility.DisplayDialog("AudioSystem", "场景中已存在 AudioManager，已更新 Settings 和 ClipData 引用。", "确定");
                 return;
             }
 
@@ -123,6 +135,7 @@ namespace AudioSystem.Editor
             {
                 manager_so.FindProperty("settings_").objectReferenceValue = settings;
             }
+            manager_so.FindProperty("clip_data_").objectReferenceValue = clip_data;
             manager_so.FindProperty("pool_initial_capacity_").intValue = 10;
             manager_so.FindProperty("pool_max_capacity_").intValue = 30;
             manager_so.ApplyModifiedProperties();
@@ -132,6 +145,7 @@ namespace AudioSystem.Editor
             EditorUtility.DisplayDialog("AudioSystem",
                 $"AudioManager 已创建！\n\n" +
                 $"Settings: {(settings != null ? settings.name : "未赋值")}\n" +
+                $"ClipData: {(clip_data != null ? clip_data.name : "未赋值")}\n" +
                 $"请将 AudioManager 放置在首场景中，它将自动 DontDestroyOnLoad。",
                 "确定");
         }
@@ -229,22 +243,22 @@ namespace AudioSystem.Editor
             // 方法1：反射调用 UnityEditor.Audio.AudioMixerController.CreateAudioMixerAssetAtPath
             try
             {
-                Assembly editorAssembly = Assembly.GetAssembly(typeof(EditorWindow));
-                if (editorAssembly != null)
+                Assembly editor_assembly = Assembly.GetAssembly(typeof(EditorWindow));
+                if (editor_assembly != null)
                 {
-                    Type controllerType = editorAssembly.GetType("UnityEditor.Audio.AudioMixerController");
-                    if (controllerType != null)
+                    Type controller_type = editor_assembly.GetType("UnityEditor.Audio.AudioMixerController");
+                    if (controller_type != null)
                     {
-                        MethodInfo createMethod = controllerType.GetMethod(
+                        MethodInfo create_method = controller_type.GetMethod(
                             "CreateAudioMixerAssetAtPath",
                             BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
                             null,
                             new[] { typeof(string) },
                             null);
 
-                        if (createMethod != null)
+                        if (create_method != null)
                         {
-                            createMethod.Invoke(null, new object[] { path });
+                            create_method.Invoke(null, new object[] { path });
                             AssetDatabase.Refresh();
                             AssetDatabase.SaveAssets();
 
@@ -264,19 +278,19 @@ namespace AudioSystem.Editor
             try
             {
                 // 某些版本的 Unity 允许通过 CreateInstance 创建
-                MethodInfo createInstance = typeof(ScriptableObject).GetMethod(
+                MethodInfo create_instance = typeof(ScriptableObject).GetMethod(
                     "CreateInstance",
                     BindingFlags.Static | BindingFlags.Public,
                     null,
                     new[] { typeof(Type) },
                     null);
 
-                if (createInstance != null)
+                if (create_instance != null)
                 {
-                    var mixerObj = createInstance.Invoke(null, new object[] { typeof(AudioMixer) });
-                    if (mixerObj != null && mixerObj is AudioMixer)
+                    var mixer_obj = create_instance.Invoke(null, new object[] { typeof(AudioMixer) });
+                    if (mixer_obj != null && mixer_obj is AudioMixer)
                     {
-                        AssetDatabase.CreateAsset(mixerObj as AudioMixer, path);
+                        AssetDatabase.CreateAsset(mixer_obj as AudioMixer, path);
                         AssetDatabase.Refresh();
                         AssetDatabase.SaveAssets();
                         return AssetDatabase.LoadAssetAtPath<AudioMixer>(path);
@@ -298,16 +312,16 @@ namespace AudioSystem.Editor
         {
             if (mixer == null) return;
 
-            AudioMixerGroup masterGroup = FindOrCreateMixerGroup(mixer, "Master", null);
+            AudioMixerGroup master_group = FindOrCreateMixerGroup(mixer, "Master", null);
 
-            string[] groupNames = { "BGM", "Battle", "UI", "Environment", "Dialogue" };
-            foreach (string name in groupNames)
+            string[] group_names = { "BGM", "Battle", "UI", "Environment", "Dialogue" };
+            foreach (string name in group_names)
             {
-                FindOrCreateMixerGroup(mixer, name, masterGroup);
+                FindOrCreateMixerGroup(mixer, name, master_group);
             }
 
             // 创建 exposed parameters
-            string[] volumeParams =
+            string[] volume_params =
             {
                 AudioSettingsSO.EXPOSED_MASTER,
                 AudioSettingsSO.EXPOSED_BGM,
@@ -317,7 +331,7 @@ namespace AudioSystem.Editor
                 AudioSettingsSO.EXPOSED_DIALOGUE,
             };
 
-            foreach (string param in volumeParams)
+            foreach (string param in volume_params)
             {
                 ExposeMixerParameter(mixer, param);
             }
@@ -326,10 +340,10 @@ namespace AudioSystem.Editor
             AudioMixerGroup[] groups = mixer.FindMatchingGroups("");
             foreach (AudioMixerGroup g in groups)
             {
-                string paramName = GetGroupParamName(g.name);
-                if (!string.IsNullOrEmpty(paramName))
+                string param_name = GetGroupParamName(g.name);
+                if (!string.IsNullOrEmpty(param_name))
                 {
-                    ExposeMixerParameter(mixer, paramName);
+                    ExposeMixerParameter(mixer, param_name);
                     // 注意：无法通过公共 API 直接设置 group 的 attenuation 链接到 parameter
                     // 这需要在 Audio Mixer 窗口中手动设置
                 }
@@ -355,8 +369,8 @@ namespace AudioSystem.Editor
             // 通过 SerializedObject 创建子组
             try
             {
-                AudioMixerGroup newGroup = CreateMixerGroupViaSerializedObject(mixer, name, parent);
-                if (newGroup != null) return newGroup;
+                AudioMixerGroup new_group = CreateMixerGroupViaSerializedObject(mixer, name, parent);
+                if (new_group != null) return new_group;
             }
             catch (Exception ex)
             {
@@ -409,10 +423,10 @@ namespace AudioSystem.Editor
         /// <summary>
         /// 暴露 mixer 的 parameter（如果尚未暴露）
         /// </summary>
-        private static void ExposeMixerParameter(AudioMixer mixer, string paramName)
+        private static void ExposeMixerParameter(AudioMixer mixer, string param_name)
         {
             float dummy;
-            if (mixer.GetFloat(paramName, out dummy))
+            if (mixer.GetFloat(param_name, out dummy))
                 return; // 已存在
 
             SerializedObject mixer_so = new SerializedObject(mixer);
@@ -425,29 +439,29 @@ namespace AudioSystem.Editor
             for (int i = 0; i < params_prop.arraySize; i++)
             {
                 SerializedProperty elem = params_prop.GetArrayElementAtIndex(i);
-                SerializedProperty nameProp = elem.FindPropertyRelative("name");
-                if (nameProp != null && nameProp.stringValue == paramName)
+                SerializedProperty name_prop = elem.FindPropertyRelative("name");
+                if (name_prop != null && name_prop.stringValue == param_name)
                     return;
             }
 
             // 添加新的 exposed parameter
             int index = params_prop.arraySize;
             params_prop.InsertArrayElementAtIndex(index);
-            SerializedProperty newElem = params_prop.GetArrayElementAtIndex(index);
-            SerializedProperty newName = newElem.FindPropertyRelative("name");
-            if (newName != null)
-                newName.stringValue = paramName;
+            SerializedProperty new_elem = params_prop.GetArrayElementAtIndex(index);
+            SerializedProperty new_name = new_elem.FindPropertyRelative("name");
+            if (new_name != null)
+                new_name.stringValue = param_name;
 
             mixer_so.ApplyModifiedProperties();
             AssetDatabase.SaveAssets();
 
             // 设置默认值 (0 dB = 1.0 linear)
-            mixer.SetFloat(paramName, 0f);
+            mixer.SetFloat(param_name, 0f);
         }
 
-        private static string GetGroupParamName(string groupName)
+        private static string GetGroupParamName(string group_name)
         {
-            return groupName.ToLowerInvariant() switch
+            return group_name.ToLowerInvariant() switch
             {
                 "master" => AudioSettingsSO.EXPOSED_MASTER,
                 "bgm" => AudioSettingsSO.EXPOSED_BGM,
