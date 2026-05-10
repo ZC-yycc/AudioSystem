@@ -1,10 +1,9 @@
 #if UNITY_EDITOR
 using System;
-using System.Reflection;
-using AudioSystem;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Audio;
+
 
 namespace AudioSystem.Editor
 {
@@ -13,11 +12,11 @@ namespace AudioSystem.Editor
     /// </summary>
     public static class AudioManagerSetup
     {
-        private const string                    MENU_ROOT = "GameObject/AudioSystem/";
+        private const string                    MENU_ROOT = "AudioSystem/";
         private const string                    RESOURCES_PATH = "Assets/AudioSystem/Resources";
-        private const string                    MIXER_PATH = "Assets/AudioSystem/Resources/AudioMixer.mixer";
-        private const string                    SETTINGS_PATH = "Assets/AudioSystem/Resources/AudioSettings.asset";
-        private const string                    CLIP_DATA_PATH = "Assets/AudioSystem/Resources/AudioClipData.asset";
+        private const string                    MIXER_PATH = RESOURCES_PATH + "/AudioMixer.mixer";
+        private const string                    SETTINGS_PATH = RESOURCES_PATH + "/AudioSettings.asset";
+        private const string                    CLIP_DATA_PATH = RESOURCES_PATH + "/AudioClipData.asset";
 
         [MenuItem(MENU_ROOT + "一键创建完整 AudioSystem", false, 0)]
         public static void CreateFullAudioSystem()
@@ -215,93 +214,23 @@ namespace AudioSystem.Editor
                 EditorUtility.DisplayDialog("AudioSystem", $"AudioMixer 已存在：{MIXER_PATH}", "确定");
                 return mixer;
             }
-
+            
             // 程序化创建 AudioMixer
-            mixer = CreateAudioMixerAsset(MIXER_PATH);
+            mixer = AudioMixerUtility.CreateAudioMixer(MIXER_PATH);
             if (mixer != null)
             {
                 EnsureMixerGroups(mixer);
                 Selection.activeObject = mixer;
                 AssetDatabase.SaveAssets();
                 EditorUtility.DisplayDialog("AudioSystem", $"AudioMixer 已创建：{MIXER_PATH}\n\n各组和 Exposed Parameters 已自动配置。", "确定");
+                return mixer;
             }
             else
             {
                 EditorUtility.DisplayDialog("AudioSystem",
-                    "无法程序化创建 AudioMixer。\n请手动创建：右键 Project 窗口 → Create → Audio Mixer，\n然后保存到 Assets/AudioSystem/Resources/AudioMixer.mixer",
+                    $"无法程序化创建 AudioMixer。\n请手动创建：右键 Project 窗口 → Create → Audio Mixer，\n然后保存到 {MIXER_PATH}",
                     "确定");
             }
-
-            return mixer;
-        }
-
-        /// <summary>
-        /// 使用 Unity 内部 API 创建 AudioMixer asset
-        /// </summary>
-        private static AudioMixer CreateAudioMixerAsset(string path)
-        {
-            // 方法1：反射调用 UnityEditor.Audio.AudioMixerController.CreateAudioMixerAssetAtPath
-            try
-            {
-                Assembly editor_assembly = Assembly.GetAssembly(typeof(EditorWindow));
-                if (editor_assembly != null)
-                {
-                    Type controller_type = editor_assembly.GetType("UnityEditor.Audio.AudioMixerController");
-                    if (controller_type != null)
-                    {
-                        MethodInfo create_method = controller_type.GetMethod(
-                            "CreateAudioMixerAssetAtPath",
-                            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-                            null,
-                            new[] { typeof(string) },
-                            null);
-
-                        if (create_method != null)
-                        {
-                            create_method.Invoke(null, new object[] { path });
-                            AssetDatabase.Refresh();
-                            AssetDatabase.SaveAssets();
-
-                            AudioMixer mixer = AssetDatabase.LoadAssetAtPath<AudioMixer>(path);
-                            if (mixer != null)
-                                return mixer;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning($"[AudioManagerSetup] 反射创建 AudioMixer 失败：{ex.Message}");
-            }
-
-            // 方法2：尝试直接创建（部分 Unity 版本支持）
-            try
-            {
-                // 某些版本的 Unity 允许通过 CreateInstance 创建
-                MethodInfo create_instance = typeof(ScriptableObject).GetMethod(
-                    "CreateInstance",
-                    BindingFlags.Static | BindingFlags.Public,
-                    null,
-                    new[] { typeof(Type) },
-                    null);
-
-                if (create_instance != null)
-                {
-                    var mixer_obj = create_instance.Invoke(null, new object[] { typeof(AudioMixer) });
-                    if (mixer_obj != null && mixer_obj is AudioMixer)
-                    {
-                        AssetDatabase.CreateAsset(mixer_obj as AudioMixer, path);
-                        AssetDatabase.Refresh();
-                        AssetDatabase.SaveAssets();
-                        return AssetDatabase.LoadAssetAtPath<AudioMixer>(path);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.LogWarning($"[AudioManagerSetup] CreateInstance 创建 AudioMixer 失败：{ex.Message}");
-            }
-
             return null;
         }
 

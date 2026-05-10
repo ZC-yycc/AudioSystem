@@ -148,8 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9413b3cf6e10ab04595665169f252a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: AudioSystem.Core::AudioSystem.AudioManager
-  settings_: {fileID: 11400000, guid: b51bfe512169c054182a4b82c5a711e7, type: 2}
-  clip_data_: {fileID: 11400000, guid: 8a2d94ffa2d9b7f4fa6966b3ea64ec8e, type: 2}
+  settings_: {fileID: 11400000, guid: 5e8c73aba38464a44990d70e9fbaaed8, type: 2}
+  clip_data_: {fileID: 11400000, guid: 6147101a5fa6fa145998569b3003d5e2, type: 2}
   pool_initial_capacity_: 10
   pool_max_capacity_: 30
 --- !u!4 &309382902

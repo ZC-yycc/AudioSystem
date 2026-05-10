@@ -62,7 +62,7 @@ namespace AudioSystem
         /// 自动创建时使用这些名称
         /// </summary>                      
         public const string                         EXPOSED_MASTER       = "MasterVolume";
-        public const string                         EXPOSED_BGM          = "BgmVolume";
+        public const string                         EXPOSED_BGM          = "BGMVolume";
         public const string                         EXPOSED_BATTLE       = "BattleVolume";
         public const string                         EXPOSED_UI           = "UIVolume";
         public const string                         EXPOSED_ENVIRONMENT  = "EnvironmentVolume";

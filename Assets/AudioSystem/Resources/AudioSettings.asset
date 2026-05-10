@@ -18,10 +18,10 @@ MonoBehaviour:
   ui_volume_: 1
   environment_volume_: 1
   dialogue_volume_: 1
-  mixer_: {fileID: 0}
-  master_group_: {fileID: 0}
-  bgm_group_: {fileID: 0}
-  battle_group_: {fileID: 0}
-  ui_group_: {fileID: 0}
-  environment_group_: {fileID: 0}
-  dialogue_group_: {fileID: 0}
+  mixer_: {fileID: 24100000, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  master_group_: {fileID: 24300002, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  bgm_group_: {fileID: 8063255721154699297, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  battle_group_: {fileID: 8325042768906091200, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  ui_group_: {fileID: 4093707420970940216, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  environment_group_: {fileID: -707308949653256108, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
+  dialogue_group_: {fileID: -9033589928509458954, guid: 7100c3b1ccbca8142bfe00375ede0bfc, type: 2}
