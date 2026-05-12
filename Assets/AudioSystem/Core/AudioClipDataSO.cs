@@ -17,7 +17,7 @@ namespace AudioSystem
         public AudioClip                            clip;
 
         [Tooltip("所属音频分组")]
-        public AudioGroup                           group;
+        public EAudioGroup                           group;
 
         [Tooltip("音量倍率（叠加在分组音量之上）")]
         [Range(0f, 2f)]
@@ -29,14 +29,14 @@ namespace AudioSystem
         /// <summary>
         /// 是否使用固定音调（x 与 y 相等）
         /// </summary>
-        public bool use_fixed_pitch => Mathf.Approximately(pitch.x, pitch.y);
+        public readonly bool UseFixedPitch => Mathf.Approximately(pitch.x, pitch.y);
 
         /// <summary>
         /// 从音调范围中获取随机音调值
         /// </summary>
-        public float GetRandomPitch()
+        public readonly float GetRandomPitch()
         {
-            if (use_fixed_pitch)
+            if (UseFixedPitch)
                 return pitch.x;
             return UnityEngine.Random.Range(pitch.x, pitch.y);
         }

@@ -9,40 +9,40 @@ namespace AudioSystem
     /// </summary>
     public struct AudioHandle
     {
-        public AudioSource source { get; internal set; }
-        public AudioGroup group { get; internal set; }
-        public bool is_valid => source != null;
-        public bool is_playing => source != null && source.isPlaying;
+        public AudioSource Source { get; internal set; }
+        public EAudioGroup Group { get; internal set; }
+        public readonly bool IsValid => Source != null;
+        public readonly bool IsPlaying => Source != null && Source.isPlaying;
 
         /// <summary>
         /// 停止播放（会回收到池中）
         /// </summary>
-        public void Stop()
+        public readonly void Stop()
         {
-            if (source != null)
+            if (Source != null)
             {
-                source.Stop();
-                source.clip = null;
-                source.loop = false;
+                Source.Stop();
+                Source.clip = null;
+                Source.loop = false;
             }
         }
 
         /// <summary>
         /// 暂停
         /// </summary>
-        public void Pause()
+        public readonly void Pause()
         {
-            if (source != null)
-                source.Pause();
+            if (Source != null)
+                Source.Pause();
         }
 
         /// <summary>
         /// 恢复
         /// </summary>
-        public void Resume()
+        public readonly void Resume()
         {
-            if (source != null)
-                source.UnPause();
+            if (Source != null)
+                Source.UnPause();
         }
     }
 
@@ -83,7 +83,7 @@ namespace AudioSystem
         [SerializeField] private int                                pool_max_capacity_ = 30;
 
         private AudioPool                                           pool_;
-        private readonly Dictionary<AudioGroup, List<AudioSource>>  group_sources_ = new();
+        private readonly Dictionary<EAudioGroup, List<AudioSource>>  group_sources_ = new();
 
         public AudioSettingsSO Settings => settings_;
         public AudioClipDataSO ClipData => clip_data_;
@@ -176,7 +176,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放一个音频（2D），音调范围从 AudioClipDataSO 获取
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group)
         {
             return Play(clip, group, Vector3.zero, GetEffectiveVolume(group), new Vector2(1f, 1f), false);
         }
@@ -184,7 +184,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放一个音频（2D），指定音调随机范围
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group, Vector2 pitch_range)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group, Vector2 pitch_range)
         {
             return Play(clip, group, Vector3.zero, GetEffectiveVolume(group), pitch_range, false);
         }
@@ -192,7 +192,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放一个音频，指定音量倍率（叠加在分组音量之上）
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group, float volume_multiplier)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group, float volume_multiplier)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, Vector3.zero, base_volume * volume_multiplier, new Vector2(1f, 1f), false);
@@ -201,7 +201,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放一个音频，指定音量倍率和音调随机范围
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group, float volume_multiplier, Vector2 pitch_range)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group, float volume_multiplier, Vector2 pitch_range)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, Vector3.zero, base_volume * volume_multiplier, pitch_range, false);
@@ -210,7 +210,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放3D音频，在世界坐标位置
         /// </summary>
-        public AudioHandle PlayAtPosition(AudioClip clip, AudioGroup group, Vector3 position, float volume_multiplier = 1f)
+        public AudioHandle PlayAtPosition(AudioClip clip, EAudioGroup group, Vector3 position, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, position, base_volume * volume_multiplier, new Vector2(1f, 1f), false);
@@ -219,7 +219,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放3D音频，在世界坐标位置，指定音调随机范围
         /// </summary>
-        public AudioHandle PlayAtPosition(AudioClip clip, AudioGroup group, Vector3 position, Vector2 pitch_range, float volume_multiplier = 1f)
+        public AudioHandle PlayAtPosition(AudioClip clip, EAudioGroup group, Vector3 position, Vector2 pitch_range, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, position, base_volume * volume_multiplier, pitch_range, false);
@@ -228,7 +228,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放循环音频（BGM等）
         /// </summary>
-        public AudioHandle PlayLoop(AudioClip clip, AudioGroup group, float volume_multiplier = 1f)
+        public AudioHandle PlayLoop(AudioClip clip, EAudioGroup group, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, Vector3.zero, base_volume * volume_multiplier, new Vector2(1f, 1f), true);
@@ -237,7 +237,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放循环音频（BGM等），指定音调随机范围
         /// </summary>
-        public AudioHandle PlayLoop(AudioClip clip, AudioGroup group, Vector2 pitch_range, float volume_multiplier = 1f)
+        public AudioHandle PlayLoop(AudioClip clip, EAudioGroup group, Vector2 pitch_range, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, Vector3.zero, base_volume * volume_multiplier, pitch_range, true);
@@ -246,7 +246,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放循环音频（3D）
         /// </summary>
-        public AudioHandle PlayLoopAtPosition(AudioClip clip, AudioGroup group, Vector3 position, float volume_multiplier = 1f)
+        public AudioHandle PlayLoopAtPosition(AudioClip clip, EAudioGroup group, Vector3 position, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, position, base_volume * volume_multiplier, new Vector2(1f, 1f), true);
@@ -255,7 +255,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放循环音频（3D），指定音调随机范围
         /// </summary>
-        public AudioHandle PlayLoopAtPosition(AudioClip clip, AudioGroup group, Vector3 position, Vector2 pitch_range, float volume_multiplier = 1f)
+        public AudioHandle PlayLoopAtPosition(AudioClip clip, EAudioGroup group, Vector3 position, Vector2 pitch_range, float volume_multiplier = 1f)
         {
             float base_volume = GetEffectiveVolume(group);
             return Play(clip, group, position, base_volume * volume_multiplier, pitch_range, true);
@@ -264,7 +264,7 @@ namespace AudioSystem
         /// <summary>
         /// 完整的播放控制（高级API），接受 pitch 随机范围
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group, Vector3 position, float volume, Vector2 pitch_range, bool loop)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group, Vector3 position, float volume, Vector2 pitch_range, bool loop)
         {
             float pitch = GetPitchFromRange(pitch_range);
             return PlayInternal(clip, group, position, volume, pitch, loop);
@@ -273,12 +273,12 @@ namespace AudioSystem
         /// <summary>
         /// 完整的播放控制（高级API），接受固定 pitch
         /// </summary>
-        public AudioHandle Play(AudioClip clip, AudioGroup group, Vector3 position, float volume, float pitch, bool loop)
+        public AudioHandle Play(AudioClip clip, EAudioGroup group, Vector3 position, float volume, float pitch, bool loop)
         {
             return PlayInternal(clip, group, position, volume, pitch, loop);
         }
 
-        private AudioHandle PlayInternal(AudioClip clip, AudioGroup group, Vector3 position, float volume, float pitch, bool loop)
+        private AudioHandle PlayInternal(AudioClip clip, EAudioGroup group, Vector3 position, float volume, float pitch, bool loop)
         {
             if (clip == null)
             {
@@ -330,7 +330,7 @@ namespace AudioSystem
             // 记录分组
             RegisterGroupSource(group, source);
 
-            return new AudioHandle { source = source, group = group };
+            return new AudioHandle { Source = source, Group = group };
         }
 
         #endregion
@@ -341,19 +341,19 @@ namespace AudioSystem
         /// 运行时设置音量并保存到 Settings
         /// 优先通过 AudioMixer exposed parameter 设置，无 mixer 时退回代码方案
         /// </summary>
-        public void SetVolume(AudioGroup group, float volume)
+        public void SetVolume(EAudioGroup group, float volume)
         {
             volume = Mathf.Clamp01(volume);
             if (settings_ == null) return;
 
             switch (group)
             {
-                case AudioGroup.Master:      settings_.MasterVolume = volume; break;
-                case AudioGroup.BGM:         settings_.BgmVolume = volume; break;
-                case AudioGroup.Battle:      settings_.BattleVolume = volume; break;
-                case AudioGroup.UI:          settings_.UIVolume = volume; break;
-                case AudioGroup.Environment: settings_.EnvironmentVolume = volume; break;
-                case AudioGroup.Dialogue:    settings_.DialogueVolume = volume; break;
+                case EAudioGroup.Master:      settings_.MasterVolume = volume; break;
+                case EAudioGroup.BGM:         settings_.BgmVolume = volume; break;
+                case EAudioGroup.Battle:      settings_.BattleVolume = volume; break;
+                case EAudioGroup.UI:          settings_.UIVolume = volume; break;
+                case EAudioGroup.Environment: settings_.EnvironmentVolume = volume; break;
+                case EAudioGroup.Dialogue:    settings_.DialogueVolume = volume; break;
             }
 
             ApplyVolume(group);
@@ -364,7 +364,7 @@ namespace AudioSystem
         /// 当使用 AudioMixer 时返回 code-driven 的计算值（仅用于显示），
         /// 实际音量由 mixer 控制
         /// </summary>
-        public float GetVolume(AudioGroup group)
+        public float GetVolume(EAudioGroup group)
         {
             if (settings_ == null) return 1f;
 
@@ -384,7 +384,7 @@ namespace AudioSystem
         /// <summary>
         /// 获取分组原始音量（不含主音量）
         /// </summary>
-        public float GetGroupVolume(AudioGroup group)
+        public float GetGroupVolume(EAudioGroup group)
         {
             return settings_?.GetGroupVolume(group) ?? 1f;
         }
@@ -432,7 +432,7 @@ namespace AudioSystem
         /// <summary>
         /// 停止指定分组的所有音效
         /// </summary>
-        public void StopGroup(AudioGroup group)
+        public void StopGroup(EAudioGroup group)
         {
             if (group_sources_.TryGetValue(group, out var sources))
             {
@@ -465,12 +465,12 @@ namespace AudioSystem
         /// <summary>
         /// 让一个跟随目标移动的3D音效跟随Transform
         /// </summary>
-        public AudioHandle PlayAttached(AudioClip clip, AudioGroup group, Transform follow_target, float volume_multiplier = 1f)
+        public AudioHandle PlayAttached(AudioClip clip, EAudioGroup group, Transform follow_target, float volume_multiplier = 1f)
         {
             AudioHandle handle = PlayAtPosition(clip, group, follow_target.position, volume_multiplier);
-            if (handle.is_valid)
+            if (handle.IsValid)
             {
-                AudioFollower follower = handle.source.gameObject.AddComponent<AudioFollower>();
+                AudioFollower follower = handle.Source.gameObject.AddComponent<AudioFollower>();
                 follower.target_ = follow_target;
                 follower.handle_ = handle;
             }
@@ -496,7 +496,7 @@ namespace AudioSystem
         /// 使用 mixer 时，AudioSource.volume 保持为1，音量完全由 mixer 控制
         /// 不使用 mixer 时，使用 code-driven 计算值
         /// </summary>
-        private float GetEffectiveVolume(AudioGroup group)
+        private float GetEffectiveVolume(EAudioGroup group)
         {
             if (settings_ == null) return 1f;
 
@@ -509,7 +509,7 @@ namespace AudioSystem
             return settings_.GetFinalVolume(group);
         }
 
-        private void RegisterGroupSource(AudioGroup group, AudioSource source)
+        private void RegisterGroupSource(EAudioGroup group, AudioSource source)
         {
             if (!group_sources_.ContainsKey(group))
                 group_sources_[group] = new List<AudioSource>();
@@ -519,7 +519,7 @@ namespace AudioSystem
         /// <summary>
         /// 应用单个分组的音量（code-driven 降级方案：遍历 AudioSource）
         /// </summary>
-        private void ApplyVolumeToGroup(AudioGroup group)
+        private void ApplyVolumeToGroup(EAudioGroup group)
         {
             if (settings_ == null) return;
             float final_volume = settings_.GetFinalVolume(group);
@@ -541,14 +541,14 @@ namespace AudioSystem
         /// <summary>
         /// 通过 AudioMixer exposed parameter 应用单个分组的音量
         /// </summary>
-        private void ApplyMixerVolume(AudioGroup group)
+        private void ApplyMixerVolume(EAudioGroup group)
         {
             if (settings_ == null || !settings_.HasMixer) return;
 
             string param = AudioSettingsSO.GetExposedParameterName(group);
             float db;
 
-            if (group == AudioGroup.Master)
+            if (group == EAudioGroup.Master)
             {
                 db = AudioSettingsSO.LinearToDecibel(settings_.MasterVolume);
             }
@@ -566,18 +566,18 @@ namespace AudioSystem
         /// </summary>
         private void ApplyAllMixerVolumes()
         {
-            ApplyMixerVolume(AudioGroup.Master);
-            ApplyMixerVolume(AudioGroup.BGM);
-            ApplyMixerVolume(AudioGroup.Battle);
-            ApplyMixerVolume(AudioGroup.UI);
-            ApplyMixerVolume(AudioGroup.Environment);
-            ApplyMixerVolume(AudioGroup.Dialogue);
+            ApplyMixerVolume(EAudioGroup.Master);
+            ApplyMixerVolume(EAudioGroup.BGM);
+            ApplyMixerVolume(EAudioGroup.Battle);
+            ApplyMixerVolume(EAudioGroup.UI);
+            ApplyMixerVolume(EAudioGroup.Environment);
+            ApplyMixerVolume(EAudioGroup.Dialogue);
         }
 
         /// <summary>
         /// 应用音量到指定分组（自动选择 mixer 或 code-driven 方案）
         /// </summary>
-        private void ApplyVolume(AudioGroup group)
+        private void ApplyVolume(EAudioGroup group)
         {
             if (settings_ == null) return;
 
@@ -606,7 +606,7 @@ namespace AudioSystem
         {
             if (target_ == null)
             {
-                if (handle_.is_valid && !handle_.is_playing)
+                if (handle_.IsValid && !handle_.IsPlaying)
                 {
                     Destroy(this);
                 }

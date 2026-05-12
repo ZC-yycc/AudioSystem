@@ -162,14 +162,10 @@ namespace AudioSystem.Editor
             EditorGUILayout.PropertyField(group_prop, new GUIContent("Group"));
 
             // 音量和音调
-            EditorGUILayout.BeginHorizontal();
+            EditorGUILayout.BeginVertical();
             EditorGUILayout.PropertyField(volume_prop, new GUIContent("Volume"), GUILayout.MinWidth(80));
             EditorGUILayout.PropertyField(pitch_prop, new GUIContent("Pitch (x=min, y=max)"), GUILayout.MinWidth(80));
-            EditorGUILayout.EndHorizontal();
-
-            // 音量滑块
-            Rect slider_rect = EditorGUILayout.GetControlRect(false, 16f);
-            volume_prop.floatValue = EditorGUI.Slider(slider_rect, volume_prop.floatValue, 0f, 2f);
+            EditorGUILayout.EndVertical();
 
             // 预览按钮
             if (clip_prop.objectReferenceValue != null)
@@ -251,18 +247,7 @@ namespace AudioSystem.Editor
             var entries = new List<AudioClipEntry>(data.Entries);
             entries.Sort((a, b) => string.CompareOrdinal(a.audio_id, b.audio_id));
 
-            entries_prop_.ClearArray();
-            for (int i = 0; i < entries.Count; i++)
-            {
-                entries_prop_.InsertArrayElementAtIndex(i);
-                SerializedProperty entry_prop = entries_prop_.GetArrayElementAtIndex(i);
-                entry_prop.FindPropertyRelative("audio_id").stringValue = entries[i].audio_id;
-                entry_prop.FindPropertyRelative("clip").objectReferenceValue = entries[i].clip;
-                entry_prop.FindPropertyRelative("group").enumValueIndex = (int)entries[i].group;
-                entry_prop.FindPropertyRelative("volume").floatValue = entries[i].volume;
-                entry_prop.FindPropertyRelative("pitch").vector2Value = entries[i].pitch;
-            }
-
+            WriteSortedEntries(entries);
             serializedObject.ApplyModifiedProperties();
             data.BuildLookup();
             EditorUtility.SetDirty(target);
@@ -279,6 +264,14 @@ namespace AudioSystem.Editor
                 return string.CompareOrdinal(a.audio_id, b.audio_id);
             });
 
+            WriteSortedEntries(entries);
+            serializedObject.ApplyModifiedProperties();
+            data.BuildLookup();
+            EditorUtility.SetDirty(target);
+        }
+
+        private void WriteSortedEntries(List<AudioClipEntry> entries)
+        {
             entries_prop_.ClearArray();
             for (int i = 0; i < entries.Count; i++)
             {
@@ -290,10 +283,6 @@ namespace AudioSystem.Editor
                 entry_prop.FindPropertyRelative("volume").floatValue = entries[i].volume;
                 entry_prop.FindPropertyRelative("pitch").vector2Value = entries[i].pitch;
             }
-
-            serializedObject.ApplyModifiedProperties();
-            data.BuildLookup();
-            EditorUtility.SetDirty(target);
         }
 
         private void GenerateCodeSnippet(string audio_id)

@@ -12,4 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03fb7b7b79266d14e92e0b891b935ae6, type: 3}
   m_Name: AudioClipData
   m_EditorClassIdentifier: AudioSystem.Core::AudioSystem.AudioClipDataSO
-  entries_: []
+  entries_:
+  - audio_id: 10003
+    clip: {fileID: 8300000, guid: c20a131ee400df544a6cafa00e56cca6, type: 3}
+    group: 0
+    volume: 1
+    pitch: {x: 1, y: 1}
+  - audio_id: 10002
+    clip: {fileID: 8300000, guid: cdaaf73197bb7a74bb085cd94afccfba, type: 3}
+    group: 1
+    volume: 1
+    pitch: {x: 1, y: 1}
+  - audio_id: 10001
+    clip: {fileID: 8300000, guid: 6cdf2b6afcdf03c4fb959f056819ba48, type: 3}
+    group: 2
+    volume: 1
+    pitch: {x: 1, y: 1}

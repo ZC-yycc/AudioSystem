@@ -26,7 +26,7 @@ namespace AudioSystem
         /// <summary>
         /// 在 AudioManager 上播放音效
         /// </summary>
-        public static AudioHandle AudioPlay(this MonoBehaviour self, AudioClip clip, AudioGroup group)
+        public static AudioHandle AudioPlay(this MonoBehaviour self, AudioClip clip, EAudioGroup group)
         {
             return AudioManager.Instance.Play(clip, group);
         }
@@ -34,7 +34,7 @@ namespace AudioSystem
         /// <summary>
         /// 在 AudioManager 上播放音效，指定音量倍率
         /// </summary>
-        public static AudioHandle AudioPlay(this MonoBehaviour self, AudioClip clip, AudioGroup group, float volume_multiplier)
+        public static AudioHandle AudioPlay(this MonoBehaviour self, AudioClip clip, EAudioGroup group, float volume_multiplier)
         {
             return AudioManager.Instance.Play(clip, group, volume_multiplier);
         }
@@ -42,7 +42,7 @@ namespace AudioSystem
         /// <summary>
         /// 在指定世界位置播放3D音效
         /// </summary>
-        public static AudioHandle AudioPlayAtPosition(this MonoBehaviour self, AudioClip clip, AudioGroup group, Vector3 position, float volume_multiplier = 1f)
+        public static AudioHandle AudioPlayAtPosition(this MonoBehaviour self, AudioClip clip, EAudioGroup group, Vector3 position, float volume_multiplier = 1f)
         {
             return AudioManager.Instance.PlayAtPosition(clip, group, position, volume_multiplier);
         }
@@ -50,7 +50,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放循环音效（常用于BGM）
         /// </summary>
-        public static AudioHandle AudioPlayLoop(this MonoBehaviour self, AudioClip clip, AudioGroup group, float volume_multiplier = 1f)
+        public static AudioHandle AudioPlayLoop(this MonoBehaviour self, AudioClip clip, EAudioGroup group, float volume_multiplier = 1f)
         {
             return AudioManager.Instance.PlayLoop(clip, group, volume_multiplier);
         }
@@ -58,7 +58,7 @@ namespace AudioSystem
         /// <summary>
         /// 播放跟随Transform的3D音效
         /// </summary>
-        public static AudioHandle AudioPlayAttached(this MonoBehaviour self, AudioClip clip, AudioGroup group, Transform target, float volume_multiplier = 1f)
+        public static AudioHandle AudioPlayAttached(this MonoBehaviour self, AudioClip clip, EAudioGroup group, Transform target, float volume_multiplier = 1f)
         {
             return AudioManager.Instance.PlayAttached(clip, group, target, volume_multiplier);
         }
@@ -72,7 +72,7 @@ namespace AudioSystem
         /// <summary>
         /// 快速播放音效
         /// </summary>
-        public static AudioHandle PlaySFX(this AudioManager manager, AudioClip clip, AudioGroup group)
+        public static AudioHandle PlaySFX(this AudioManager manager, AudioClip clip, EAudioGroup group)
         {
             return manager.Play(clip, group);
         }
@@ -80,7 +80,7 @@ namespace AudioSystem
         /// <summary>
         /// 获取分组音量
         /// </summary>
-        public static float Volume(this AudioManager manager, AudioGroup group)
+        public static float Volume(this AudioManager manager, EAudioGroup group)
         {
             return manager.GetVolume(group);
         }

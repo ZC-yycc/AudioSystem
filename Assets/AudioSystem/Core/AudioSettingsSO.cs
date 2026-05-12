@@ -159,17 +159,17 @@ namespace AudioSystem
         /// <summary>
         /// 根据分组获取混音组
         /// </summary>
-        public AudioMixerGroup GetMixerGroup(AudioGroup group)
+        public AudioMixerGroup GetMixerGroup(EAudioGroup group)
         {
             if (mixer_ == null) return null;
             return group switch
             {
-                AudioGroup.Master      => master_group_,
-                AudioGroup.BGM         => bgm_group_,
-                AudioGroup.Battle      => battle_group_,
-                AudioGroup.UI          => ui_group_,
-                AudioGroup.Environment => environment_group_,
-                AudioGroup.Dialogue    => dialogue_group_,
+                EAudioGroup.Master      => master_group_,
+                EAudioGroup.BGM         => bgm_group_,
+                EAudioGroup.Battle      => battle_group_,
+                EAudioGroup.UI          => ui_group_,
+                EAudioGroup.Environment => environment_group_,
+                EAudioGroup.Dialogue    => dialogue_group_,
                 _ => null
             };
         }
@@ -177,16 +177,16 @@ namespace AudioSystem
         /// <summary>
         /// 根据分组获取 exposed parameter 名称
         /// </summary>
-        public static string GetExposedParameterName(AudioGroup group)
+        public static string GetExposedParameterName(EAudioGroup group)
         {
             return group switch
             {
-                AudioGroup.Master      => EXPOSED_MASTER,
-                AudioGroup.BGM         => EXPOSED_BGM,
-                AudioGroup.Battle      => EXPOSED_BATTLE,
-                AudioGroup.UI          => EXPOSED_UI,
-                AudioGroup.Environment => EXPOSED_ENVIRONMENT,
-                AudioGroup.Dialogue    => EXPOSED_DIALOGUE,
+                EAudioGroup.Master      => EXPOSED_MASTER,
+                EAudioGroup.BGM         => EXPOSED_BGM,
+                EAudioGroup.Battle      => EXPOSED_BATTLE,
+                EAudioGroup.UI          => EXPOSED_UI,
+                EAudioGroup.Environment => EXPOSED_ENVIRONMENT,
+                EAudioGroup.Dialogue    => EXPOSED_DIALOGUE,
                 _ => EXPOSED_MASTER
             };
         }
@@ -194,16 +194,16 @@ namespace AudioSystem
         /// <summary>
         /// 根据分组获取对应音量（不含主音量）
         /// </summary>
-        public float GetGroupVolume(AudioGroup group)
+        public float GetGroupVolume(EAudioGroup group)
         {
             return group switch
             {
-                AudioGroup.Master      => master_volume_,
-                AudioGroup.BGM         => bgm_volume_,
-                AudioGroup.Battle      => battle_volume_,
-                AudioGroup.UI          => ui_volume_,
-                AudioGroup.Environment => environment_volume_,
-                AudioGroup.Dialogue    => dialogue_volume_,
+                EAudioGroup.Master      => master_volume_,
+                EAudioGroup.BGM         => bgm_volume_,
+                EAudioGroup.Battle      => battle_volume_,
+                EAudioGroup.UI          => ui_volume_,
+                EAudioGroup.Environment => environment_volume_,
+                EAudioGroup.Dialogue    => dialogue_volume_,
                 _ => 1f
             };
         }
@@ -211,9 +211,9 @@ namespace AudioSystem
         /// <summary>
         /// 计算最终音量 = 主音量 * 分组音量（code-driven 降级方案）
         /// </summary>
-        public float GetFinalVolume(AudioGroup group)
+        public float GetFinalVolume(EAudioGroup group)
         {
-            if (group == AudioGroup.Master)
+            if (group == EAudioGroup.Master)
                 return master_volume_;
             return master_volume_ * GetGroupVolume(group);
         }

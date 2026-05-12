@@ -1,6 +1,6 @@
 ﻿<Solution>
   <Project Path="AudioSystem.Core.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
-  <Project Path="AudioSystem.Editor.csproj" />
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="AudioSystem.Editor.csproj" />
 </Solution>

@@ -38,27 +38,21 @@ namespace AudioSystem.Editor
             // 主音量
             EditorGUILayout.LabelField("主音量 (Master)", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(master_volume_prop_, new GUIContent("Master Volume"));
-            DrawVolumeBar(master_volume_prop_.floatValue);
-            EditorGUILayout.Space(10);
+            EditorGUILayout.Space(30);
 
             // 分组音量
             EditorGUILayout.LabelField("分组音量", EditorStyles.boldLabel);
             EditorGUI.indentLevel++;
 
             EditorGUILayout.PropertyField(bgm_volume_prop_, new GUIContent("BGM / 背景音乐"));
-            DrawVolumeBar(bgm_volume_prop_.floatValue);
 
             EditorGUILayout.PropertyField(battle_volume_prop_, new GUIContent("Battle / 战斗音效"));
-            DrawVolumeBar(battle_volume_prop_.floatValue);
 
             EditorGUILayout.PropertyField(ui_volume_prop_, new GUIContent("UI / 界面音效"));
-            DrawVolumeBar(ui_volume_prop_.floatValue);
 
             EditorGUILayout.PropertyField(environment_volume_prop_, new GUIContent("Environment / 环境音效"));
-            DrawVolumeBar(environment_volume_prop_.floatValue);
 
             EditorGUILayout.PropertyField(dialogue_volume_prop_, new GUIContent("Dialogue / 对话音效"));
-            DrawVolumeBar(dialogue_volume_prop_.floatValue);
 
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(10);
@@ -87,13 +81,6 @@ namespace AudioSystem.Editor
             EditorGUILayout.EndHorizontal();
 
             serializedObject.ApplyModifiedProperties();
-        }
-
-        private static void DrawVolumeBar(float value)
-        {
-            Rect rect = EditorGUILayout.GetControlRect(false, 4f);
-            EditorGUI.ProgressBar(rect, value, $"{value:P0}");
-            EditorGUILayout.Space(2);
         }
     }
 }
