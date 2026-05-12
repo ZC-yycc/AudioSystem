@@ -29,9 +29,13 @@ Assets/AudioSystem/
 │   └── AudioSystem.Core.asmdef     # 核心程序集定义
 ├── Editor/                         # Editor 工具
 │   ├── AudioManagerSetup.cs        # 一键创建工具（菜单项）
+│   ├── AudioMixerUtility.cs        # AudioMixer 程序化创建工具
 │   ├── AudioSettingsSOEditor.cs    # Settings 自定义 Inspector
 │   ├── AudioClipDataSOEditor.cs    # ClipData 自定义 Inspector
+│   ├── Templates/                  # 预制体模板
 │   └── AudioSystem.Editor.asmdef   # Editor 程序集定义
+├── Test/                           # 测试
+│   └── AudioSystemTest.cs          # 交互式测试脚本
 ├── Resources/                      # 运行时资源
 │   ├── AudioSettings.asset         # 音频配置实例
 │   ├── AudioClipData.asset         # 音频资源表实例
@@ -179,7 +183,7 @@ handle.Pause();
 handle.Resume();
 
 // 检查状态
-if (handle.is_playing) { ... }
+if (handle.IsPlaying) { ... }
 ```
 
 ## API 参考
@@ -262,7 +266,7 @@ ScriptableObject，存储 audio_id 到 AudioClip 的映射关系。通过 Resour
 | `group` | `AudioGroup` | 所属分组 |
 | `volume` | `float` | 音量倍率（0~2） |
 | `pitch` | `Vector2` | 音调随机范围（x=最小, y=最大），相等则为固定值 |
-| `use_fixed_pitch` | `bool` | 是否使用固定音调 |
+| `UseFixedPitch` | `bool` | 是否使用固定音调 |
 | `GetRandomPitch()` | `float` | 获取随机/固定音调值 |
 
 ### AudioGroup 枚举
@@ -280,10 +284,10 @@ ScriptableObject，存储 audio_id 到 AudioClip 的映射关系。通过 Resour
 
 | 属性/方法 | 说明 |
 |-----------|------|
-| `is_valid` | 是否有效 |
-| `is_playing` | 是否正在播放 |
-| `source` | 获取原始 AudioSource |
-| `group` | 获取所属分组 |
+| `IsValid` | 是否有效 |
+| `IsPlaying` | 是否正在播放 |
+| `Source` | 获取原始 AudioSource |
+| `Group` | 获取所属分组 |
 | `Stop()` | 停止播放（回收到池） |
 | `Pause()` | 暂停 |
 | `Resume()` | 恢复 |
@@ -390,6 +394,34 @@ if (AudioPersistentSettings.HasSavedData())
 
 - Unity 2022.3+
 - `UnityEngine.AudioModule`
+
+## 测试
+
+框架在 `Assets/AudioSystem/Test/AudioSystemTest.cs` 中提供了一个交互式测试脚本。
+
+### 使用方法
+
+1. 将 `AudioSystemTest` 脚本挂载到场景中任意 GameObject 上
+2. 在 Inspector 中拖入测试用的 AudioClip 资源
+3. 运行场景，按键盘按键即可测试各项功能
+
+### 测试按键
+
+| 按键 | 功能 |
+|------|------|
+| **1** | 2D 音效播放（直接 Clip 引用） |
+| **2** | 2D 音效播放（通过 audio_id） |
+| **3** | 3D 音效（随机世界坐标位置） |
+| **4** | BGM 循环播放/切换 |
+| **5** | 跟随目标移动的 3D 音效 |
+| **P** | 暂停当前音效 |
+| **R** | 恢复当前音效 |
+| **S** | 停止当前音效 |
+| **A** | 停止所有音效 |
+| **Q / W** | 增大 / 减小 BGM 音量 |
+| **E** | 音调随机变化测试 |
+| **V** | 打印当前状态和所有分组音量 |
+| **T** | **自动逐步运行全部测试**（一键验证） |
 
 ## 许可
 
